@@ -17,7 +17,6 @@ pipeline {
 	      agent any
 	      steps {
 	        sh 'docker build -t laljanibasha/spring-petclinic:latest .' 
-            sh 'docker run -p 8081:8080 laljanibasha/spring-petclinic'
 	      }
         }
         stage('Docker Push') {
