@@ -13,11 +13,21 @@ pipeline {
                 sh 'mvn clean install'
             }
         }
-	stage ("Docker Build"){
-	  agent any
-	  steps {
-	    sh 'docker build -t laljanibasha/spring-petclinic:latest .' 
-	  }
-       }
+	    stage ("Docker Build"){
+	      agent any
+	      steps {
+	        sh 'docker build -t laljanibasha/spring-petclinic:latest .' 
+            sh 'docker run -p 8081:8080 laljanibasha/spring-petclinic'
+	      }
+        }
+        stage('Docker Push') {
+          agent any
+            steps {
+              withCredentials([usernamePassword(credentialsId: 'Dockerhub_cred', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+                sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+                sh 'docker push laljanibasha/spring-petclinic:latest'
+               }
+            }
+        }
     }
 }
